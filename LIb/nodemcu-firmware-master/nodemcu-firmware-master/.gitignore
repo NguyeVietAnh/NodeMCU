@@ -1,0 +1,16 @@
+.gdb_history
+sdk/
+cache/
+.ccache/
+local/
+user_config.h
+server-ca.crt
+luac.cross
+uz_unzip
+uz_zip
+tools/toolchains/
+
+#ignore Eclipse project files
+.cproject
+.project
+.settings/
