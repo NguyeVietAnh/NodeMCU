@@ -11,35 +11,42 @@
 
 #include <SPI.h>
 #include <Wire.h>
+#include <BlynkSimpleEsp8266.h>
+#define BLYNK_PRINT Serial   
+#include <ESP8266WiFi.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+//-------------------------------------------------
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 32 // OLED display height, in pixels
-
-//----------------------------------------------------------------------------------
-#define SW_VERSION "ServoCtrlBlynk_V.1" 
-
-/*NodeMCU */
-#include <ESP8266WiFi.h>
-char ssid [] = "NgocChau";
-char pass [] = "67689606";
-
-/* Blynk */
-#include <BlynkSimpleEsp8266.h>
-#define BLYNK_PRINT Serial    // Comment this out to disable prints and save space
-char auth [] = "784fc5249758459e848f8352ab353f33"; // Servo Control Project // Servo Control Project
-//----------------------------
-
+#define OLED_RESET     LED_BUILTIN // Reset pin # (or -1 if sharing Arduino reset pin)
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
-#define OLED_RESET     LED_BUILTIN // Reset pin # (or -1 if sharing Arduino reset pin)
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-
+//-------------------------------------
 #define Vx D6 // Define / Equate "Vx" with D6, the pin where Vx is connected
 #define Vy D7 // Define / Equate "Vy" with D7, the pin where Vy is connected
 #define Button D8 // Define / Equate Button with D8, the pin where the button is connected
 
+//----------------------------------------------------------------------------------
+#define pwm D3
+#define dir D4
 
+ int pwm_adc;
+
+/*NodeMCU */
+
+char ssid [] = "NgocChau";
+char pass [] = "67689606";
+char auth [] = "784fc5249758459e848f8352ab353f33"; 
+BLYNK_WRITE(V0)
+{
+ int x1 = param[0].asInt();
+   moveControl(x1);
+
+}
+
+/* Blynk */
 void setup()
 {
   Serial.begin(9600);
@@ -66,6 +73,8 @@ void setup()
                                  // Note, we're configuring an Analog input as digital input
                                  // which is perfectly fine.  I did this to make the wiring easier
                                  // and keep all of the wires on the same side of the board
+  pinMode(dir,OUTPUT);
+  
 
   Blynk.begin(auth, ssid, pass);  // Set up Wifi
 
@@ -90,12 +99,14 @@ void loop()
 //  Serial.println(btn); // Print the value of the Btn (0=Pushed, 1 = Not Pushed)
   
 //  delay(50); // Delay 250ms so the results don't print too quickly
- if (btn == 0)
- {
- int pwm_adc;
- pwm_adc = analogRead(D6); /* Input from Potentiometer for speed control */
- analogWrite(D3,pwm_adc);
- delayMicroseconds(10);
+
+
+// pwm_adc = analogRead(D6); /* Input from Potentiometer for speed control */
+// analogWrite(D3,pwm_adc);
+// delayMicroseconds(10);
+
+ Blynk.run();
+
 
 
 
@@ -119,8 +130,8 @@ void loop()
   display.printf("%d",pwm_adc); 
   display.display();
   delay(1);
-  display.clearDisplay();
- }
+
+ 
 
 
   
@@ -167,12 +178,11 @@ void testdrawstyles(void) {
   display.println(F("Speed"));
   display.display();
   delay(100);
+ }
  
-
-
-
- 
-  
-
+ void moveControl(int x1)
+{
+    digitalWrite(dir,HIGH);
+    analogWrite(pwm,x1);
 
 }
