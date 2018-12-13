@@ -33,6 +33,8 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 #define dir D4
 
  int pwm_adc;
+ int x1;
+ 
 
 /*NodeMCU */
 
@@ -127,8 +129,9 @@ void loop()
   display.setTextSize(2);             // Normal 1:1 pixel scale
   display.setTextColor(WHITE);        // Draw white text
   display.setCursor(66,16);             // Start at top-left corner
-  display.printf("%d",pwm_adc); 
+  display.printf("%d",x1); 
   display.display();
+  display.clearDisplay();
   delay(1);
 
  
